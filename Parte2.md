@@ -6,6 +6,7 @@ utiliza una combinación de joins y una subconsulta con NOT EXISTS para asegurar
 en los que está inscrito se encuentren únicamente en sucursales que ha visitado, y no en ninguna otra. De esta manera, se garantiza 
 que el resultado incluya únicamente los nombres de los clientes que cumplen estrictamente con la condición planteada en el enunciado.
 
+```sql
 SELECT DISTINCT c.nombre
 FROM clientes c
 JOIN inscripciones i ON c.id = i.cliente_id
@@ -26,3 +27,4 @@ AND NOT EXISTS (
         WHERE v2.cliente_id = c.id
     )
 );
+```
