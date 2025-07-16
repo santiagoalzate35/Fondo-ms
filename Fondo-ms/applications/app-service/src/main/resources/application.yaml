@@ -1,0 +1,43 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: "Fondo-ms"
+  devtools:
+    add-properties: false
+  profiles:
+    active: "local"
+  data:
+    mongodb:
+      uri: "mongodb://localhost:27017/fondoDB"
+  mail:
+    host: "smtp.gmail.com"
+    port: 587
+    username: "${EMAIL}"
+    password: "${EMAIL_KEY}"
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  server:
+    port: 8082
+
+cors:
+  allowed-origins: "*"
+springdoc:
+  use-management-port: true
+jwt:
+  secret: "secretsecretsecretsecretsecretsecretsecretsecret"
+  expiration: 24

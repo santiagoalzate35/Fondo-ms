@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongo_btg
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - btg_net
+
+  springboot-app:
+    image: btg-backend:latest
+    container_name: btg_backend_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/btg
+      - JWT_SECRET=your_jwt_secret_key
+    networks:
+      - btg_net
+
+volumes:
+  mongo_data:
+
+networks:
+  btg_net:
+    driver: bridge

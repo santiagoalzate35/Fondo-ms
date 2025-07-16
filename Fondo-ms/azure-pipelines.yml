@@ -1,0 +1,27 @@
+trigger:
+  branches:
+    include:
+      - '*'
+  paths:
+    exclude:
+      - .azure-pipelines
+      - README.md
+      - azure-pipelines.yml
+
+pr:
+  branches:
+    exclude:
+      - '*'
+
+resources:
+  repositories:
+    - repository: devops_pipeline_ref
+      type: git
+      name: devops_pipeline_ref
+      ref: refs/heads/trunk
+
+extends:
+  template: master-extends.yaml@devops_pipeline_ref
+  parameters:
+    deploy: 'ecs'
+    technology: 'java-springboot'

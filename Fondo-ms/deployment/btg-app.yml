@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Backend BTG - Spring Boot + MongoDB
+
+Resources:
+
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP and SSH
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.medium
+      ImageId: ami-0c02fb55956c7d316
+      KeyName: btg-keypair
+      SecurityGroups:
+        - !Ref AppSecurityGroup
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          yum update -y
+          amazon-linux-extras install docker -y
+          service docker start
+          usermod -a -G docker ec2-user
+          docker run -d -p 27017:27017 --name mongo mongo:6.0
+          docker run -d -p 8080:8080 \
+            --name btg-backend \
+            -e SPRING_DATA_MONGODB_URI=mongodb://host.docker.internal:27017/btg \
+            -e JWT_SECRET=your_jwt_secret_key \
+            btg-backend:latest
+
+Outputs:
+  AppURL:
+    Description: URL pública de la aplicación
+    Value: !Sub "http://${EC2Instance.PublicDnsName}:8080"
